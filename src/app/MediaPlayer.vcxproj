@@ -68,7 +68,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -86,11 +86,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PlayCtrlWidget.cpp" />
     <QtRcc Include="MediaPlayer.qrc" />
     <QtUic Include="MediaPlayer.ui" />
     <QtMoc Include="MediaPlayer.h" />
+    <ClCompile Include="DisplayWindow.cpp" />
+    <ClCompile Include="MainPanel.cpp" />
     <ClCompile Include="MediaPlayer.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="MainPanel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="DisplayWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="PlayCtrlWidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
