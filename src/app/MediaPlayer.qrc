@@ -1,4 +1,7 @@
 <RCC>
-    <qresource prefix="MediaPlayer">
+    <qresource prefix="/MediaPlayer">
+        <file>images/disp_bg.png</file>
+        <file>shader/fshader.glsl</file>
+        <file>shader/vshader.glsl</file>
     </qresource>
 </RCC>
