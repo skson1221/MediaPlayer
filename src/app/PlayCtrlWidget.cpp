@@ -34,6 +34,7 @@ void PlayCtrlWidget::Initialize()
 
 		m_pPlayButton = new QPushButton("Play", this);
 		m_pPlayButton->setCheckable(true);
+		connect(m_pPlayButton, SIGNAL(clicked()), this, SLOT(slotClickedPlay()));
 
 		m_pTimeLabel = new QLabel("00:00:00 / 00:00:00", this);
 		m_pTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -46,4 +47,9 @@ void PlayCtrlWidget::Initialize()
 	pMainLayout->addLayout(pBottomLayout);
 
 	setLayout(pMainLayout);
+}
+
+void PlayCtrlWidget::slotClickedPlay()
+{
+	emit sigClickedPlay();
 }

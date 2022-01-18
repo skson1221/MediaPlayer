@@ -11,6 +11,8 @@ DisplayWindow::DisplayWindow()
 	, m_indexBuffer(QOpenGLBuffer::IndexBuffer)
 	, m_pBackgroupTexture(nullptr)
 	, m_pRenderThread(nullptr)
+	, m_codec()
+	, m_bDecode(false)
 {
 	InitOpenGLContext();
 }
@@ -131,7 +133,15 @@ void DisplayWindow::InitOpenGLContext()
 
 void DisplayWindow::Update()
 {
+	if (!m_bDecode)
+		return;
 
+	if (!m_codec.IsOpen())
+	{
+		m_codec.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4");
+	}
+
+	m_codec.Decode();
 }
 
 void DisplayWindow::Render()
@@ -176,5 +186,5 @@ void DisplayWindow::Render()
 
 void DisplayWindow::slotClickedPlay()
 {
-
+	m_bDecode = true;
 }

@@ -7,6 +7,7 @@
 #include <QOpenGLTexture>
 
 #include "RenderThread.h"
+#include "Codec.h"
 
 class DisplayWindow : public QWindow, public QOpenGLFunctions
 {
@@ -45,5 +46,7 @@ private:
 	QOpenGLTexture*			m_pBackgroupTexture;
 
 	RenderThread*			m_pRenderThread;
+	Codec					m_codec;
+	bool					m_bDecode;
 };
 

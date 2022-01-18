@@ -27,6 +27,7 @@ void MainPanel::Initialize()
 	pDispWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	m_pPlayCtrlWidget = new PlayCtrlWidget(this);
+	connect(m_pPlayCtrlWidget, SIGNAL(sigClickedPlay()), m_pDispWindow, SLOT(slotClickedPlay()));
 
 	pMainLayout->addWidget(pDispWidget);
 	pMainLayout->addWidget(m_pPlayCtrlWidget);
