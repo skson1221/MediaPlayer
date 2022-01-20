@@ -102,7 +102,7 @@ bool Codec::Open(const std::string& sFileName)
     av_init_packet(m_pPacket);
 
     printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
-    m_sws_ctx = sws_getContext(m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
+    m_sws_ctx = sws_getContext(m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, SWS_BICUBIC, NULL, NULL, NULL);
 
 
     m_bOpen = true;
@@ -146,20 +146,20 @@ bool Codec::IsOpen()
     return m_bOpen;
 }
 
-bool Codec::Decode()
+bool Codec::Decode(YUV_BUFFER& yuvBuffer)
 {
     if (av_read_frame(m_pFormatContext, m_pPacket) < 0)
         return false;
 
     if (m_pPacket->stream_index == m_nVideoStreamIdx)
-        return VideoDecode();
+        return VideoDecode(yuvBuffer);
     else if (m_pPacket->stream_index == m_nAudioStreamIdx)
         return AudioDecode();
 
     return true;
 }
 
-bool Codec::VideoDecode()
+bool Codec::VideoDecode(YUV_BUFFER& yuvBuffer)
 {
     int ret = avcodec_send_packet(m_pCodecContext, m_pPacket);
     if (ret < 0)
@@ -195,14 +195,14 @@ bool Codec::VideoDecode()
         }
 
         int numBytes = 0;
-        numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGB24, m_pCodecContext->width, m_pCodecContext->height, 32); // [10]
+        numBytes = av_image_get_buffer_size(m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, 32); // [10]
         uint8_t* buffer = (uint8_t*)av_malloc(numBytes * sizeof(uint8_t));    // [11]
 
         av_image_fill_arrays( // [12]
             pFrameRGB->data,
             pFrameRGB->linesize,
             buffer,
-            AV_PIX_FMT_RGB24,
+            m_pCodecContext->pix_fmt,
             m_pCodecContext->width,
             m_pCodecContext->height,
             32
@@ -217,6 +217,14 @@ bool Codec::VideoDecode()
             pFrameRGB->data,
             pFrameRGB->linesize
         );
+        
+        yuvBuffer[YUV_Y].reserve(pFrameRGB->linesize[0]);
+        yuvBuffer[YUV_U].reserve(pFrameRGB->linesize[1]);
+        yuvBuffer[YUV_V].reserve(pFrameRGB->linesize[2]);
+
+        yuvBuffer[YUV_Y].insert(yuvBuffer[YUV_Y].end(), &pFrameRGB->data[0][0], &pFrameRGB->data[0][pFrameRGB->linesize[0]]);
+        yuvBuffer[YUV_U].insert(yuvBuffer[YUV_U].end(), &pFrameRGB->data[1][0], &pFrameRGB->data[1][pFrameRGB->linesize[1]]);
+        yuvBuffer[YUV_V].insert(yuvBuffer[YUV_V].end(), &pFrameRGB->data[2][0], &pFrameRGB->data[2][pFrameRGB->linesize[2]]);
 
         printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
     }

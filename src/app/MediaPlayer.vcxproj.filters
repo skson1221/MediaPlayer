@@ -74,5 +74,11 @@
     <ClInclude Include="Codec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AppDefine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="YUVData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

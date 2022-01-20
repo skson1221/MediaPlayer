@@ -6,6 +6,8 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
 
+#include <array>
+
 #include "RenderThread.h"
 #include "Codec.h"
 
@@ -14,12 +16,6 @@ class DisplayWindow : public QWindow, public QOpenGLFunctions
 	Q_OBJECT
 
 	friend class RenderThread;
-
-	struct VertexData
-	{
-		QVector3D	vPosition;
-		QVector2D	vTexCoord;
-	};
 
 public:
 	DisplayWindow();
@@ -44,9 +40,12 @@ private:
 	QOpenGLBuffer			m_vertexBuffer;
 	QOpenGLBuffer			m_indexBuffer;
 	QOpenGLTexture*			m_pBackgroupTexture;
+	YUV_TEXTURE				m_pYUVTextures;
+	YUV_BUFFER				m_pYUVBuffer;
 
 	RenderThread*			m_pRenderThread;
 	Codec					m_codec;
 	bool					m_bDecode;
+	
 };
 

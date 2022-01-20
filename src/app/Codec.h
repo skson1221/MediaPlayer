@@ -11,6 +11,8 @@ extern "C"
 
 #include <string>
 
+#include "YUVData.h"
+
 class Codec
 {
 public:
@@ -19,8 +21,8 @@ public:
 
 	bool Open(const std::string& sFileName);
 	bool IsOpen();
-	bool Decode();
-	bool VideoDecode();
+	bool Decode(YUV_BUFFER& yuvBuffer);
+	bool VideoDecode(YUV_BUFFER& yuvBuffer);
 	bool AudioDecode();
 	void Clear();
 
