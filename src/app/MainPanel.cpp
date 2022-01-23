@@ -26,11 +26,18 @@ void MainPanel::Initialize()
 	QWidget* pDispWidget = QWidget::createWindowContainer((QWindow*)m_pDispWindow, this);
 	pDispWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+	m_streamWorker.SetRenderCallback(m_pDispWindow->GetRenderCallback());
+
 	m_pPlayCtrlWidget = new PlayCtrlWidget(this);
-	connect(m_pPlayCtrlWidget, SIGNAL(sigClickedPlay()), m_pDispWindow, SLOT(slotClickedPlay()));
+	connect(m_pPlayCtrlWidget, SIGNAL(sigClickedPlay()), this, SLOT(slotClickedPlay()));
 
 	pMainLayout->addWidget(pDispWidget);
 	pMainLayout->addWidget(m_pPlayCtrlWidget);
 
 	setLayout(pMainLayout);
+}
+
+void MainPanel::slotClickedPlay()
+{
+	m_streamWorker.Start();
 }

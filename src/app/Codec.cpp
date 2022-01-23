@@ -152,7 +152,9 @@ bool Codec::Decode(YUV_BUFFER& yuvBuffer)
         return false;
 
     if (m_pPacket->stream_index == m_nVideoStreamIdx)
-        return VideoDecode(yuvBuffer);
+    {
+        while (!VideoDecode(yuvBuffer)) {}
+    }
     else if (m_pPacket->stream_index == m_nAudioStreamIdx)
         return AudioDecode();
 
@@ -218,18 +220,19 @@ bool Codec::VideoDecode(YUV_BUFFER& yuvBuffer)
             pFrameRGB->linesize
         );
         
-        yuvBuffer[YUV_Y].reserve(pFrameRGB->linesize[0]);
-        yuvBuffer[YUV_U].reserve(pFrameRGB->linesize[1]);
-        yuvBuffer[YUV_V].reserve(pFrameRGB->linesize[2]);
+        yuvBuffer[YUV_Y].reserve(pFrameRGB->linesize[0] * pFrame->height);
+        yuvBuffer[YUV_U].reserve(pFrameRGB->linesize[1] * (pFrame->height / 2));
+        yuvBuffer[YUV_V].reserve(pFrameRGB->linesize[2] * (pFrame->height / 2));
 
-        yuvBuffer[YUV_Y].insert(yuvBuffer[YUV_Y].end(), &pFrameRGB->data[0][0], &pFrameRGB->data[0][pFrameRGB->linesize[0]]);
-        yuvBuffer[YUV_U].insert(yuvBuffer[YUV_U].end(), &pFrameRGB->data[1][0], &pFrameRGB->data[1][pFrameRGB->linesize[1]]);
-        yuvBuffer[YUV_V].insert(yuvBuffer[YUV_V].end(), &pFrameRGB->data[2][0], &pFrameRGB->data[2][pFrameRGB->linesize[2]]);
+        yuvBuffer[YUV_Y].insert(yuvBuffer[YUV_Y].end(), &pFrameRGB->data[0][0], &pFrameRGB->data[0][pFrameRGB->linesize[0] * pFrame->height]);
+        yuvBuffer[YUV_U].insert(yuvBuffer[YUV_U].end(), &pFrameRGB->data[1][0], &pFrameRGB->data[1][pFrameRGB->linesize[1] * (pFrame->height / 2)]);
+        yuvBuffer[YUV_V].insert(yuvBuffer[YUV_V].end(), &pFrameRGB->data[2][0], &pFrameRGB->data[2][pFrameRGB->linesize[2] * (pFrame->height / 2)]);
 
         printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool Codec::AudioDecode()

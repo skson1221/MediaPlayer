@@ -41,5 +41,6 @@ void main()
 
 	if (texColor.a == 0.0)
 		discard;
+	
 	gl_FragColor = texColor;
 }

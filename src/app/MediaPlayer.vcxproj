@@ -98,6 +98,7 @@
     <ClCompile Include="Codec.cpp" />
     <ClCompile Include="PlayCtrlWidget.cpp" />
     <ClCompile Include="RenderThread.cpp" />
+    <ClCompile Include="StreamWorker.cpp" />
     <QtRcc Include="MediaPlayer.qrc" />
     <QtUic Include="MediaPlayer.ui" />
     <QtMoc Include="MediaPlayer.h" />
@@ -121,6 +122,7 @@
   <ItemGroup>
     <ClInclude Include="AppDefine.h" />
     <ClInclude Include="Codec.h" />
+    <ClInclude Include="StreamWorker.h" />
     <ClInclude Include="YUVData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

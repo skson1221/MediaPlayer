@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <array>
+#include <functional>
 
 struct Vector2D
 {
@@ -40,3 +41,5 @@ enum
 };
 typedef std::array<uint32_t, YUV_MAX> YUV_TEXTURE;
 typedef std::array<std::vector<uint8_t>, YUV_MAX> YUV_BUFFER;
+
+typedef std::function<void(YUV_BUFFER&)> TyFnRenderCallback;

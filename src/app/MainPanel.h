@@ -3,6 +3,7 @@
 
 #include "DisplayWindow.h"
 #include "PlayCtrlWidget.h"
+#include "StreamWorker.h"
 
 class MainPanel : public QWidget
 {
@@ -15,8 +16,12 @@ public:
 private:
 	void Initialize();
 
+public slots:
+	void slotClickedPlay();
+
 private:
 	DisplayWindow* m_pDispWindow;
 	PlayCtrlWidget* m_pPlayCtrlWidget;
+	StreamWorker m_streamWorker;
 };
 

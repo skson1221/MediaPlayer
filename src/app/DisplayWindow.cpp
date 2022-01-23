@@ -11,12 +11,18 @@ DisplayWindow::DisplayWindow()
 	, m_pRenderShader(nullptr)
 	, m_vertexBuffer(QOpenGLBuffer::VertexBuffer)
 	, m_indexBuffer(QOpenGLBuffer::IndexBuffer)
-	, m_pBackgroupTexture(nullptr)
+	//, m_pBackgroupTexture(nullptr)
 	, m_pRenderThread(nullptr)
-	, m_codec()
 	, m_bDecode(false)
 {
 	InitOpenGLContext();
+
+	for (int i = 0; i < m_pYUVTextures.size(); ++i)
+	{
+		m_pYUVTextures[i] = YUV_DEFAULT;
+	}
+
+	m_fnRenderCallback = std::bind(&DisplayWindow::OnReceiveRenderCallback, this, std::placeholders::_1);
 }
 
 DisplayWindow::~DisplayWindow()
@@ -33,6 +39,11 @@ DisplayWindow::~DisplayWindow()
 	{
 		glDeleteTextures(1, &m_pYUVTextures[YUV_U]);
 	}
+}
+
+TyFnRenderCallback DisplayWindow::GetRenderCallback()
+{
+	return m_fnRenderCallback;
 }
 
 //void DisplayWindow::exposeEvent(QExposeEvent* ev)
@@ -91,8 +102,31 @@ void DisplayWindow::InitOpenGLContext()
 	{
 		qDebug() << "Load Failed BG Image";
 	}
+	qDebug() << bgImage.format();
+	//m_pBackgroupTexture = new QOpenGLTexture(bgImage);
 
-	m_pBackgroupTexture = new QOpenGLTexture(bgImage);
+	//QImage img(200, 100, QImage::Format_RGBA8888);
+	//img.fill(QColor(0, 0, 255, 255));
+	//QByteArray arr((char*)img.bits(), img.byteCount());
+	//int s = img.byteCount();
+	
+	//uchar* ptr = img.bits();
+	//for (int i = 0; i < img.byteCount(); ++i)
+	//{
+	//	qDebug() << i << (int)ptr[i];
+	//}
+
+	glGenTextures(1, &m_pBackgroupTexture);
+	glBindTexture(GL_TEXTURE_2D, m_pBackgroupTexture);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bgImage.width(), bgImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, bgImage.bits());
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 3840, 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	m_pYUVTextures.fill(YUV_DEFAULT);
 
 	m_vertexBuffer.create();
@@ -144,31 +178,41 @@ void DisplayWindow::Update()
 	if (!m_bDecode)
 		return;
 
-	if (!m_codec.IsOpen())
-	{
-		m_codec.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4");
-	}
-
-	m_codec.Decode(m_pYUVBuffer);
-
 	if (YUV_DEFAULT == m_pYUVTextures[YUV_Y]) glGenTextures(1, &m_pYUVTextures[YUV_Y]);
 	if (YUV_DEFAULT == m_pYUVTextures[YUV_U]) glGenTextures(1, &m_pYUVTextures[YUV_U]);
 	if (YUV_DEFAULT == m_pYUVTextures[YUV_V]) glGenTextures(1, &m_pYUVTextures[YUV_V]);
 
-	glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_Y]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 3840, 2160, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 3840, 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
-	glBindTexture(GL_TEXTURE_2D, 0);
+	int widthY = 3840;
+	int widthUV = widthY / 2;
 
-	glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_U]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, m_pYUVBuffer[YUV_U].size(), 2160, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pYUVBuffer[YUV_U].size(), 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
-	glBindTexture(GL_TEXTURE_2D, 0);
+	int heightY = 2160;
+	int heightUV = heightY / 2;
+	if (0 < m_pYUVBuffer[YUV_Y].size())
+	{
+		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_Y]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthY, heightY, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
+		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 3840, 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
-	glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_V]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, m_pYUVBuffer[YUV_V].size(), 2160, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pYUVBuffer[YUV_U].size(), 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
-	glBindTexture(GL_TEXTURE_2D, 0);
+	if (0 < m_pYUVBuffer[YUV_U].size())
+	{
+		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_U]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
+		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pYUVBuffer[YUV_U].size(), 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	if (0 < m_pYUVBuffer[YUV_V].size())
+	{
+		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_V]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
+		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pYUVBuffer[YUV_U].size(), 2160, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 void DisplayWindow::Render()
@@ -182,8 +226,6 @@ void DisplayWindow::Render()
 	//m_vertexBuffer.bind();
 	//m_indexBuffer.bind();
 
-	m_pRenderShader->setUniformValue("xMargin", 1.0f);
-	m_pRenderShader->setUniformValue("yMargin", 1.0f);
 	m_pRenderShader->setUniformValue("mTranslate", QMatrix4x4());
 
 	if (m_bDecode)
@@ -208,7 +250,8 @@ void DisplayWindow::Render()
 	else
 	{
 		m_pRenderShader->setUniformValue("isYUVDraw", false);
-		GLuint id = m_pBackgroupTexture->textureId();
+		//GLuint id = m_pBackgroupTexture->textureId();
+		GLuint id = m_pBackgroupTexture;
 		glActiveTexture(GL_TEXTURE0 + id);
 		glBindTexture(GL_TEXTURE_2D, id);
 		m_pRenderShader->setUniformValue("texBG", id);
@@ -232,7 +275,9 @@ void DisplayWindow::Render()
 	//m_pRenderShader->release();
 }
 
-void DisplayWindow::slotClickedPlay()
+void DisplayWindow::OnReceiveRenderCallback(YUV_BUFFER& pYUVBuffer)
 {
+	m_pYUVBuffer.swap(pYUVBuffer);
+
 	m_bDecode = true;
 }
