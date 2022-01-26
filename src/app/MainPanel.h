@@ -5,6 +5,8 @@
 #include "PlayCtrlWidget.h"
 #include "StreamWorker.h"
 
+using namespace player;
+
 class MainPanel : public QWidget
 {
 	Q_OBJECT

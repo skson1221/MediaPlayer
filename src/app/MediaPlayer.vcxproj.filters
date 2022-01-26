@@ -58,6 +58,9 @@
     <ClCompile Include="StreamWorker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StreamController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MainPanel.h">
@@ -72,6 +75,9 @@
     <QtMoc Include="RenderThread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="StreamController.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codec.h">
@@ -84,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StreamWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

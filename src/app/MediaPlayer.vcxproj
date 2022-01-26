@@ -98,6 +98,7 @@
     <ClCompile Include="Codec.cpp" />
     <ClCompile Include="PlayCtrlWidget.cpp" />
     <ClCompile Include="RenderThread.cpp" />
+    <ClCompile Include="StreamController.cpp" />
     <ClCompile Include="StreamWorker.cpp" />
     <QtRcc Include="MediaPlayer.qrc" />
     <QtUic Include="MediaPlayer.ui" />
@@ -122,6 +123,8 @@
   <ItemGroup>
     <ClInclude Include="AppDefine.h" />
     <ClInclude Include="Codec.h" />
+    <QtMoc Include="StreamController.h" />
+    <ClInclude Include="PlayerDef.h" />
     <ClInclude Include="StreamWorker.h" />
     <ClInclude Include="YUVData.h" />
   </ItemGroup>

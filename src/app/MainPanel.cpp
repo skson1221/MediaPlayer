@@ -1,4 +1,5 @@
 #include "MainPanel.h"
+#include "StreamController.h"
 
 #include <QLayout>
 
@@ -26,7 +27,7 @@ void MainPanel::Initialize()
 	QWidget* pDispWidget = QWidget::createWindowContainer((QWindow*)m_pDispWindow, this);
 	pDispWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-	m_streamWorker.SetRenderCallback(m_pDispWindow->GetRenderCallback());
+	StreamController::GetInstance()->SetRenderCallback(m_pDispWindow->GetRenderCallback());
 
 	m_pPlayCtrlWidget = new PlayCtrlWidget(this);
 	connect(m_pPlayCtrlWidget, SIGNAL(sigClickedPlay()), this, SLOT(slotClickedPlay()));
@@ -39,5 +40,5 @@ void MainPanel::Initialize()
 
 void MainPanel::slotClickedPlay()
 {
-	m_streamWorker.Start();
+	StreamController::GetInstance()->SetWorkMode(WORK_MODE_FORWARD_STEP);
 }
