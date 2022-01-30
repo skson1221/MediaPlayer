@@ -15,7 +15,7 @@ varying vec2	v_TexCoord;
 
 void main()
 {
-	gl_Position = mTranslate * a_Position;
+	gl_Position = a_Position;
 
 	v_TexCoord  = a_TexCoord;
 	v_TexCoord.x = v_TexCoord.x;

@@ -102,6 +102,7 @@ void DisplayWindow::InitOpenGLContext()
 	{
 		qDebug() << "Load Failed BG Image";
 	}
+	bgImage = bgImage.mirrored();
 	qDebug() << bgImage.format();
 	//m_pBackgroupTexture = new QOpenGLTexture(bgImage);
 
@@ -134,10 +135,10 @@ void DisplayWindow::InitOpenGLContext()
 
 	VertexData vertices[] =
 	{
-		{ Vector3D(-1.0f, 1.0f, 0.0f), Vector2D(0.0f, 1.0f) },
-		{ Vector3D(1.0f, 1.0f, 0.0f), Vector2D(1.0f, 1.0f) },
-		{ Vector3D(-1.0f, -1.0f, 0.0f),Vector2D(0.0f, 0.0f) },
-		{ Vector3D(1.0f, -1.0f, 0.0f), Vector2D(1.0f, 0.0f) },
+		{ Vector3D(-1.0f, 1.0f, 0.0f), Vector2D(0.0f, 0.0f) },
+		{ Vector3D(1.0f, 1.0f, 0.0f), Vector2D(1.0f, 0.0f) },
+		{ Vector3D(-1.0f, -1.0f, 0.0f),Vector2D(0.0f, 1.0f) },
+		{ Vector3D(1.0f, -1.0f, 0.0f), Vector2D(1.0f, 1.0f) },
 	};
 
 	GLushort indices[] =
@@ -226,7 +227,7 @@ void DisplayWindow::Render()
 	//m_vertexBuffer.bind();
 	//m_indexBuffer.bind();
 
-	m_pRenderShader->setUniformValue("mTranslate", QMatrix4x4());
+	//m_pRenderShader->setUniformValue("mTranslate", QMatrix4x4());
 
 	if (m_bDecode)
 	{
