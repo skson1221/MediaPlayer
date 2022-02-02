@@ -33,13 +33,13 @@ namespace player
 
 	void StreamWorker::Work()
 	{
-		//while (1)
+		while (1)
 		{
 			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 			if (!m_codec.IsOpen())
 			{
-				if (!m_codec.Open("C:/Project/MediaPlayer/bin/x64/snow_4K.mp4"))
+				if (!m_codec.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4"))
 					return;
 			}
 

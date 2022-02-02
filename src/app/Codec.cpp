@@ -86,22 +86,14 @@ bool Codec::Open(const std::string& sFileName)
     AVFrame* pFrame = NULL;
 
     // Allocate video frame
-    pFrame = av_frame_alloc();
-    if (pFrame == NULL)
-    {
-        printf("Could not allocate frame.\n");
-        return false;
-    }
+    //pFrame = av_frame_alloc();
+    //if (pFrame == NULL)
+    //{
+    //    printf("Could not allocate frame.\n");
+    //    return false;
+    //}
 
-    m_pPacket = av_packet_alloc();
-    if (nullptr == m_pPacket)
-    {
-        printf("Could not alloc packet,\n");
-        return false;
-    }
-    av_init_packet(m_pPacket);
-
-    printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
+   // printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
     m_sws_ctx = sws_getContext(m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, SWS_BICUBIC, NULL, NULL, NULL);
 
 
@@ -148,15 +140,25 @@ bool Codec::IsOpen()
 
 bool Codec::Decode(YUV_BUFFER& yuvBuffer)
 {
+    m_pPacket = av_packet_alloc();
+    if (nullptr == m_pPacket)
+    {
+        printf("Could not alloc packet,\n");
+        return false;
+    }
+    av_init_packet(m_pPacket);
+
     if (av_read_frame(m_pFormatContext, m_pPacket) < 0)
         return false;
-
+    
     if (m_pPacket->stream_index == m_nVideoStreamIdx)
     {
         while (!VideoDecode(yuvBuffer)) {}
     }
     else if (m_pPacket->stream_index == m_nAudioStreamIdx)
-        return AudioDecode();
+        AudioDecode();
+
+    av_free_packet(m_pPacket);
 
     return true;
 }
@@ -220,6 +222,10 @@ bool Codec::VideoDecode(YUV_BUFFER& yuvBuffer)
             pFrameRGB->linesize
         );
         
+        yuvBuffer[YUV_Y].clear();
+        yuvBuffer[YUV_U].clear();
+        yuvBuffer[YUV_V].clear();
+
         yuvBuffer[YUV_Y].reserve(pFrameRGB->linesize[0] * pFrame->height);
         yuvBuffer[YUV_U].reserve(pFrameRGB->linesize[1] * (pFrame->height / 2));
         yuvBuffer[YUV_V].reserve(pFrameRGB->linesize[2] * (pFrame->height / 2));
@@ -229,6 +235,11 @@ bool Codec::VideoDecode(YUV_BUFFER& yuvBuffer)
         yuvBuffer[YUV_V].insert(yuvBuffer[YUV_V].end(), &pFrameRGB->data[2][0], &pFrameRGB->data[2][pFrameRGB->linesize[2] * (pFrame->height / 2)]);
 
         printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
+
+        av_frame_free(&pFrame);
+        av_frame_free(&pFrameRGB);
+        av_free(buffer);
+
         return true;
     }
 
