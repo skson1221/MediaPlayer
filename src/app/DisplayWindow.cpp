@@ -191,9 +191,8 @@ void DisplayWindow::Update()
 	if (0 < m_pYUVBuffer[YUV_Y].size())
 	{
 		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_Y]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthY, heightY, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthY, heightY, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthY, heightY, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthY, heightY, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthY, heightY, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_Y].data());
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -201,9 +200,8 @@ void DisplayWindow::Update()
 	if (0 < m_pYUVBuffer[YUV_U].size())
 	{
 		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_U]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthUV, heightUV, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthUV, heightUV, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_U].data());
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -211,9 +209,8 @@ void DisplayWindow::Update()
 	if (0 < m_pYUVBuffer[YUV_V].size())
 	{
 		glBindTexture(GL_TEXTURE_2D, m_pYUVTextures[YUV_V]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
-		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthUV, heightUV, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, widthUV, heightUV, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, widthUV, heightUV, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pYUVBuffer[YUV_V].data());
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
