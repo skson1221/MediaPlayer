@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 namespace player
 {
@@ -14,4 +15,6 @@ namespace player
 		WORK_SUCCESS,
 		WORK_FINISH,
 	};
+
+	typedef std::function<void> TyFnStreamCallback;
 }

@@ -1,19 +1,24 @@
 #include "MainPanel.h"
-#include "StreamController.h"
 
 #include <QLayout>
+#include <QFileDialog>
+
+#include "StreamController.h"
+#include "util_func.h"
 
 MainPanel::MainPanel(QWidget* parent)
 	: QWidget(parent)
 	, m_pDispWindow(nullptr)
 	, m_pPlayCtrlWidget(nullptr)
+	, m_pMediaFile(nullptr)
 {
 	Initialize();
 }
 
 MainPanel::~MainPanel()
 {
-
+	if (m_pMediaFile)
+		safe_delete(m_pMediaFile);
 }
 
 void MainPanel::Initialize()
@@ -40,5 +45,15 @@ void MainPanel::Initialize()
 
 void MainPanel::slotClickedPlay()
 {
-	StreamController::GetInstance()->SetWorkMode(WORK_MODE_FORWARD_STEP);
+	QString sFileName = QFileDialog::getOpenFileName(this,
+		tr("Open Image"), "", tr("Media File (*.mp4 *.avi)"));
+
+	if (nullptr == m_pMediaFile)
+		m_pMediaFile = new MediaFile();
+	
+	bool res = m_pMediaFile->Open(sFileName);
+	if (false == res)
+	{
+		safe_delete(m_pMediaFile);
+	}
 }

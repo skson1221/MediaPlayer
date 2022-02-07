@@ -4,7 +4,7 @@ namespace player
 {
 	StreamWorker::StreamWorker()
 		: m_eWorkMode(WORK_MODE_PAUSE)
-		, m_codec()
+		, m_videoDecoder()
 		, m_fnRenderCallback()
 	{
 	}
@@ -37,9 +37,9 @@ namespace player
 		{
 			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-			if (!m_codec.IsOpen())
+			if (!m_videoDecoder.IsOpen())
 			{
-				if (!m_codec.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4"))
+				if (!m_videoDecoder.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4"))
 					return;
 			}
 
@@ -67,7 +67,7 @@ namespace player
 
 	WorkResult StreamWorker::ForwardStepPlay()
 	{
-		m_codec.Decode(m_pYUVBuffer);
+		m_videoDecoder(m_pYUVBuffer);
 		m_fnRenderCallback(m_pYUVBuffer);
 
 		return WORK_FINISH;

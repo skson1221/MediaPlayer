@@ -2,7 +2,7 @@
 #include <thread>
 
 #include "PlayerDef.h"
-#include "Codec.h"
+#include "VideoDecoder.h"
 
 namespace player
 {
@@ -26,7 +26,7 @@ namespace player
 		std::thread m_thWorker;
 
 		WorkMode	m_eWorkMode;
-		Codec m_codec;
+		VideoDecoder m_videoDecoder;
 		YUV_BUFFER				m_pYUVBuffer;
 		TyFnRenderCallback	m_fnRenderCallback;
 	};

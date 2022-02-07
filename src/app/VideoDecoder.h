@@ -5,7 +5,7 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libavutil/samplefmt.h"
 #include "libavutil/imgutils.h"
-#include "libavformat/avformat.h"
+//#include "libavformat/avformat.h"
 #include "libswscale/swscale.h"
 }
 
@@ -13,21 +13,20 @@ extern "C"
 
 #include "YUVData.h"
 
-class Codec
+class VideoDecoder
 {
 public:
-	Codec();
-	~Codec();
+	VideoDecoder();
+	~VideoDecoder();
 
 	bool Open(const std::string& sFileName);
 	bool IsOpen();
-	bool Decode(YUV_BUFFER& yuvBuffer);
-	bool VideoDecode(YUV_BUFFER& yuvBuffer);
-	bool AudioDecode();
 	void Clear();
 
+	bool operator()(YUV_BUFFER& yuvBuffer);
+
 private:
-	AVFormatContext*	m_pFormatContext;
+	//AVFormatContext*	m_pFormatContext;
 	AVCodecContext*		m_pCodecContext;
 	AVPacket*			m_pPacket;
 	SwsContext*			m_sws_ctx;
