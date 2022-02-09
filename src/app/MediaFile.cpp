@@ -36,6 +36,17 @@ namespace player
         while (!m_bRelease)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+            AVPacket packet;
+            av_init_packet(&packet);
+            if (av_read_frame(m_pFormatContext, &packet) < 0)
+                continue;
+
+            if (packet.stream_index == m_nVideoStreamIdx)
+            {
+                int nDataSize = packet.size;
+                m_fnStreamCallback();
+            }
         }
     }
 
@@ -76,5 +87,25 @@ namespace player
         }
 
         return false;
+    }
+
+    AVCodecID MediaFile::GetCodecID()
+    {
+        if (m_pFormatContext && 0 < m_nVideoStreamIdx)
+        {
+            return m_pFormatContext->streams[m_nVideoStreamIdx]->codecpar->codec_id;
+        }
+
+        return AV_CODEC_ID_NONE;
+    }
+
+    const AVCodecParameters* MediaFile::GetCodecParam()
+    {
+        if (m_pFormatContext && 0 < m_nVideoStreamIdx)
+        {
+            return m_pFormatContext->streams[m_nVideoStreamIdx]->codecpar;
+        }
+        
+        return nullptr;
     }
 }

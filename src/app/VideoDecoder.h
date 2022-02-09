@@ -19,7 +19,7 @@ public:
 	VideoDecoder();
 	~VideoDecoder();
 
-	bool Open(const std::string& sFileName);
+	bool Open(AVCodecID eCodecID, const AVCodecParameters* pCodecParam);
 	bool IsOpen();
 	void Clear();
 
@@ -28,7 +28,6 @@ public:
 private:
 	//AVFormatContext*	m_pFormatContext;
 	AVCodecContext*		m_pCodecContext;
-	AVPacket*			m_pPacket;
 	SwsContext*			m_sws_ctx;
 
 	int		m_nVideoStreamIdx;

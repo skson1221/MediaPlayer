@@ -24,7 +24,8 @@ namespace player
 		void run();
 
 		bool Open(const QString sFileName);
-
+		AVCodecID GetCodecID();
+		const AVCodecParameters* GetCodecParam();
 
 	private:
 		AVFormatContext* m_pFormatContext;

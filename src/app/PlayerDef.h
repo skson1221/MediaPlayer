@@ -16,5 +16,5 @@ namespace player
 		WORK_FINISH,
 	};
 
-	typedef std::function<void> TyFnStreamCallback;
+	typedef std::function<void(void)> TyFnStreamCallback;
 }
