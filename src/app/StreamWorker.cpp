@@ -31,17 +31,21 @@ namespace player
 		Start();
 	}
 
+	TyFnVideoStream StreamWorker::GetVideoStreamCallback()
+	{
+		return std::bind(&StreamWorker::onRecvVideoStream, this, std::placeholders::_1, std::placeholders::_2);
+	}
+
+	TyFnAudioStream StreamWorker::GetAudioStreamCallback()
+	{
+		return std::bind(&StreamWorker::onRecvAudioStream, this, std::placeholders::_1, std::placeholders::_2);
+	}
+
 	void StreamWorker::Work()
 	{
 		while (1)
 		{
 			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-			if (!m_videoDecoder.IsOpen())
-			{
-				if (!m_videoDecoder.Open("C:/Project/Qt/MediaPlayer/bin/x64/snow_4K.mp4"))
-					return;
-			}
 
 			switch (m_eWorkMode)
 			{
@@ -71,5 +75,15 @@ namespace player
 		m_fnRenderCallback(m_pYUVBuffer);
 
 		return WORK_FINISH;
+	}
+
+	bool StreamWorker::onRecvVideoStream(const uint8_t* const data, int length)
+	{
+		return false;
+	}
+
+	bool StreamWorker::onRecvAudioStream(const uint8_t* const data, int length)
+	{
+		return false;
 	}
 }

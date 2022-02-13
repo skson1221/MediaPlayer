@@ -16,5 +16,6 @@ namespace player
 		WORK_FINISH,
 	};
 
-	typedef std::function<void(void)> TyFnStreamCallback;
+	typedef std::function<bool(const uint8_t* const, int)> TyFnVideoStream;
+	typedef std::function<bool(const uint8_t* const, int)> TyFnAudioStream;
 }

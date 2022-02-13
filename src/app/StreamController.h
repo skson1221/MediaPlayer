@@ -15,6 +15,8 @@ namespace player
 
 		void SetRenderCallback(TyFnRenderCallback fn);
 		void SetWorkMode(WorkMode mode);
+		TyFnVideoStream GetVideoStreamCallback();
+		TyFnAudioStream GetAudioStreamCallback();
 
 	private:
 		StreamController() {};

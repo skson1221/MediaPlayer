@@ -8,25 +8,27 @@
 
 using namespace player;
 
-class MainPanel : public QWidget
+namespace player
 {
-	Q_OBJECT
+	class MainPanel : public QWidget
+	{
+		Q_OBJECT
 
-public:
-	MainPanel(QWidget* parent = Q_NULLPTR);
-	~MainPanel();
+	public:
+		MainPanel(QWidget* parent = Q_NULLPTR);
+		~MainPanel();
 
-private:
-	void Initialize();
+	private:
+		void Initialize();
 
-public slots:
-	void slotClickedPlay();
+	public slots:
+		void slotClickedPlay();
 
-private:
-	DisplayWindow* m_pDispWindow;
-	PlayCtrlWidget* m_pPlayCtrlWidget;
-	StreamWorker m_streamWorker;
+	private:
+		DisplayWindow* m_pDispWindow;
+		PlayCtrlWidget* m_pPlayCtrlWidget;
+		StreamWorker m_streamWorker;
 
-	MediaFile* m_pMediaFile;
-};
-
+		MediaFile* m_pMediaFile;
+	};
+}

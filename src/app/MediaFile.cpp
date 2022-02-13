@@ -2,17 +2,19 @@
 
 namespace player
 {
-    MediaFile::MediaFile(TyFnStreamCallback fn)
+    MediaFile::MediaFile(TyFnVideoStream fnVideoStream, TyFnAudioStream fnAudioStream)
         : m_pFormatContext(nullptr)
         , m_nVideoStreamIdx(-1)
         , m_nAudioStreamIdx(-1)
         , m_bRelease(false)
+        , m_bOpen(false)
         , m_mutexRead()
         , m_cvRead()
         , m_thReadThread()
     {
         m_thReadThread = std::thread(&MediaFile::run, this);
-        m_fnStreamCallback = fn;
+        m_fnVideoStream = fnVideoStream;
+        m_fnAudioStream = fnAudioStream;
     }
 
     MediaFile::~MediaFile()
@@ -35,7 +37,12 @@ namespace player
     {
         while (!m_bRelease)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            
+            if (!m_bOpen)
+            {
+                continue;
+            }
 
             AVPacket packet;
             av_init_packet(&packet);
@@ -44,27 +51,28 @@ namespace player
 
             if (packet.stream_index == m_nVideoStreamIdx)
             {
-                int nDataSize = packet.size;
-                m_fnStreamCallback();
+                bool res = m_fnVideoStream(packet.data, packet.size);
+            }
+            else if (packet.stream_index == m_nAudioStreamIdx)
+            {
+                bool res = m_fnAudioStream(packet.data, packet.size);
             }
         }
     }
 
-    bool MediaFile::Open(const QString sFileName)
+    bool MediaFile::Open(const QString& sFileName)
     {
-        const char* c_strFileName = sFileName.toStdString().c_str();
-
-        int ret = avformat_open_input(&m_pFormatContext, c_strFileName, nullptr, nullptr);
+        int ret = avformat_open_input(&m_pFormatContext, sFileName.toStdString().c_str(), nullptr, nullptr);
         if (ret < 0)
         {
-            printf("Could not open file %s\n", c_strFileName);
+            printf("Could not open file %s\n", sFileName.toStdString().c_str());
             return false;
         }
 
         ret = avformat_find_stream_info(m_pFormatContext, nullptr);
         if (ret < 0)
         {
-            printf("Could not find stream information %s\n", c_strFileName);
+            printf("Could not find stream information %s\n", sFileName.toStdString().c_str());
             return false;
         }
 
@@ -82,11 +90,13 @@ namespace player
 
         if (-1 == m_nVideoStreamIdx)
         {
-            printf("Could not find video stream %s\n", c_strFileName);
+            printf("Could not find video stream %s\n", sFileName.toStdString().c_str());
             return false;
         }
 
-        return false;
+        m_bOpen = true;
+
+        return true;
     }
 
     AVCodecID MediaFile::GetCodecID()

@@ -18,12 +18,12 @@ namespace player
 	class MediaFile
 	{
 	public:
-		explicit MediaFile(TyFnStreamCallback fn);
+		explicit MediaFile(TyFnVideoStream fnVideoStream, TyFnAudioStream fnAudioStream);
 		~MediaFile();
 
 		void run();
 
-		bool Open(const QString sFileName);
+		bool Open(const QString& sFileName);
 		AVCodecID GetCodecID();
 		const AVCodecParameters* GetCodecParam();
 
@@ -38,7 +38,9 @@ namespace player
 		std::thread m_thReadThread;
 
 		bool m_bRelease;
+		bool m_bOpen;
 
-		TyFnStreamCallback m_fnStreamCallback;
+		TyFnVideoStream m_fnVideoStream;
+		TyFnAudioStream m_fnAudioStream;
 	};
 }

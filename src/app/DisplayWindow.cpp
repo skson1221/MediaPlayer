@@ -21,8 +21,6 @@ DisplayWindow::DisplayWindow()
 	{
 		m_pYUVTextures[i] = YUV_DEFAULT;
 	}
-
-	m_fnRenderCallback = std::bind(&DisplayWindow::OnReceiveRenderCallback, this, std::placeholders::_1);
 }
 
 DisplayWindow::~DisplayWindow()
@@ -43,7 +41,7 @@ DisplayWindow::~DisplayWindow()
 
 TyFnRenderCallback DisplayWindow::GetRenderCallback()
 {
-	return m_fnRenderCallback;
+	return std::bind(&DisplayWindow::OnReceiveRenderCallback, this, std::placeholders::_1);
 }
 
 //void DisplayWindow::exposeEvent(QExposeEvent* ev)

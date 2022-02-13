@@ -30,4 +30,14 @@ namespace player
 	{
 		m_videoStream.SetWorkMode(mode);
 	}
+
+	TyFnVideoStream StreamController::GetVideoStreamCallback()
+	{
+		 return m_videoStream.GetVideoStreamCallback();
+	}
+
+	 TyFnAudioStream StreamController::GetAudioStreamCallback()
+	 {
+		 return m_videoStream.GetAudioStreamCallback();
+	 }
 }
