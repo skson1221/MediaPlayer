@@ -23,7 +23,7 @@ public:
 	bool IsOpen();
 	void Clear();
 
-	bool operator()(YUV_BUFFER& yuvBuffer);
+	bool operator()(uint8_t* data, int length, YUV_BUFFER& yuvBuffer);
 
 private:
 	//AVFormatContext*	m_pFormatContext;

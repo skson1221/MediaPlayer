@@ -116,12 +116,16 @@ void VideoDecoder::Clear()
     m_nAudioStreamIdx = -1;
 }
 
-bool VideoDecoder::operator()(YUV_BUFFER& yuvBuffer)
+bool VideoDecoder::operator()(uint8_t* data, int length, YUV_BUFFER& yuvBuffer)
 {
 	bool res = true;
 	while (res)
 	{
         AVPacket packet;
+        av_init_packet(&packet);
+        packet.data = data;
+        packet.size = length;
+        packet.flags = AV_PKT_FLAG_KEY;
 		int ret = avcodec_send_packet(m_pCodecContext, &packet);
 		if (ret < 0)
 		{

@@ -61,5 +61,7 @@ namespace player
 		{
 			safe_delete(m_pMediaFile);
 		}
+
+		StreamController::GetInstance()->SetWorkMode(WorkMode::WORK_MODE_FORWARD_STEP);
 	}
 }

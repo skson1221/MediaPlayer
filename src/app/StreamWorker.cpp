@@ -1,4 +1,5 @@
 #include "StreamWorker.h"
+#include <iostream>
 
 namespace player
 {
@@ -71,18 +72,38 @@ namespace player
 
 	WorkResult StreamWorker::ForwardStepPlay()
 	{
-		m_videoDecoder(m_pYUVBuffer);
+		TySpMediaItem spVideoData(nullptr);
+		{
+			std::lock_guard<std::mutex> lg(m_mutexVideo);
+
+			if(m_videoStreamQueue.empty())
+				return WORK_FINISH;
+
+			spVideoData = m_videoStreamQueue.front();
+			m_videoStreamQueue.pop();
+			std::cout << "pop video data" << std::endl;
+		}
+
+		uint8_t* videoData = spVideoData->GetData();
+		int videoLength = spVideoData->GetLength();
+		m_videoDecoder(videoData, videoLength, m_pYUVBuffer);
 		m_fnRenderCallback(m_pYUVBuffer);
 
 		return WORK_FINISH;
 	}
 
-	bool StreamWorker::onRecvVideoStream(const uint8_t* const data, int length)
+	bool StreamWorker::onRecvVideoStream(uint8_t* data, int length)
 	{
+		TySpMediaItem spVideoData = std::make_shared<MediaItem>(data, length);
+		{
+			std::lock_guard<std::mutex> lg(m_mutexVideo);
+			m_videoStreamQueue.push(spVideoData);
+			std::cout << "pusu video data" << std::endl;
+		}
 		return false;
 	}
 
-	bool StreamWorker::onRecvAudioStream(const uint8_t* const data, int length)
+	bool StreamWorker::onRecvAudioStream(uint8_t* data, int length)
 	{
 		return false;
 	}

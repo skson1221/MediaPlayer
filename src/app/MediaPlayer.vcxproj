@@ -96,6 +96,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MediaFile.cpp" />
+    <ClCompile Include="MediaItem.cpp" />
     <ClCompile Include="PlayCtrlWidget.cpp" />
     <ClCompile Include="RenderThread.cpp" />
     <ClCompile Include="StreamController.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="AppDefine.h" />
     <QtMoc Include="StreamController.h" />
     <ClInclude Include="MediaFile.h" />
+    <ClInclude Include="MediaItem.h" />
     <ClInclude Include="PlayerDef.h" />
     <ClInclude Include="StreamWorker.h" />
     <ClInclude Include="util_func.h" />

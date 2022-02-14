@@ -11,5 +11,5 @@ template <class T>
 inline void safe_delete_array(T arr)
 {
 	delete[] arr;
-	ptr = nullptr;
+	arr = nullptr;
 }
