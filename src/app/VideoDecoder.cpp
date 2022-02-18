@@ -34,7 +34,7 @@ bool VideoDecoder::Open(AVCodecID eCodecID, const AVCodecParameters* pCodecParam
 
     m_pCodecContext = nullptr;
     m_pCodecContext = avcodec_alloc_context3(pCodec);
-    //int ret = avcodec_parameters_to_context(m_pCodecContext, pCodecParam);
+    int ret = avcodec_parameters_to_context(m_pCodecContext, pCodecParam);
     
     //if (0 != ret)
     //{
@@ -42,7 +42,13 @@ bool VideoDecoder::Open(AVCodecID eCodecID, const AVCodecParameters* pCodecParam
     //    return false;
     //}
 
-    int ret = avcodec_open2(m_pCodecContext, pCodec, nullptr);
+    m_pCodecContext->width = 3840;
+    m_pCodecContext->height = 2160;
+    m_pCodecContext->codec_type = AVMEDIA_TYPE_VIDEO;
+    m_pCodecContext->codec_id = AV_CODEC_ID_H264;
+    m_pCodecContext->pix_fmt = AV_PIX_FMT_YUV420P;
+    m_pCodecContext->extradata_size = 48;
+    ret = avcodec_open2(m_pCodecContext, pCodec, nullptr);
     if (ret < 0)
     {
         printf("Could not open codec.\n");
@@ -60,7 +66,7 @@ bool VideoDecoder::Open(AVCodecID eCodecID, const AVCodecParameters* pCodecParam
     //}
 
    // printf("Resolution : %d x %d, PixFormat : %d FPS : %d.\n", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->framerate);
-    m_sws_ctx = sws_getContext(m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, SWS_BICUBIC, NULL, NULL, NULL);
+   
 
 
     m_bOpen = true;
@@ -126,6 +132,13 @@ bool VideoDecoder::operator()(uint8_t* data, int length, YUV_BUFFER& yuvBuffer)
         packet.data = data;
         packet.size = length;
         packet.flags = AV_PKT_FLAG_KEY;
+        //packet.pts = 0;
+        //packet.dts = -2002;
+        //packet.duration = 1001;
+        //packet.pos = 23478;
+        //m_pCodecContext->codec_tag = 828601953;
+        //m_pCodecContext->profile = 100;
+        //m_pCodecContext->level = 52;
 		int ret = avcodec_send_packet(m_pCodecContext, &packet);
 		if (ret < 0)
 		{
@@ -174,6 +187,9 @@ bool VideoDecoder::operator()(uint8_t* data, int length, YUV_BUFFER& yuvBuffer)
 				m_pCodecContext->height,
 				32
 			);
+
+            if(nullptr == m_sws_ctx)
+                m_sws_ctx = sws_getContext(m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->pix_fmt, SWS_BICUBIC, NULL, NULL, NULL);
 
 			sws_scale(  // [16]
 				m_sws_ctx,

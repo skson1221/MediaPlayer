@@ -31,6 +31,11 @@ namespace player
 		m_videoStream.SetWorkMode(mode);
 	}
 
+	void StreamController::CreateCodec(AVCodecID eVideoCodec, AVCodecID eAudioCodecID, const AVCodecParameters* pCodecParam)
+	{
+		m_videoStream.CreateCodec(eVideoCodec, eAudioCodecID, pCodecParam);
+	}
+
 	TyFnVideoStream StreamController::GetVideoStreamCallback()
 	{
 		 return m_videoStream.GetVideoStreamCallback();

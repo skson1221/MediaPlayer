@@ -32,6 +32,11 @@ namespace player
 		Start();
 	}
 
+	void StreamWorker::CreateCodec(AVCodecID eVideoCodec, AVCodecID eAudioCodecID, const AVCodecParameters* pCodecParam)
+	{
+		m_videoDecoder.Open(eVideoCodec, pCodecParam);
+	}
+
 	TyFnVideoStream StreamWorker::GetVideoStreamCallback()
 	{
 		return std::bind(&StreamWorker::onRecvVideoStream, this, std::placeholders::_1, std::placeholders::_2);
@@ -82,6 +87,11 @@ namespace player
 			spVideoData = m_videoStreamQueue.front();
 			m_videoStreamQueue.pop();
 			std::cout << "pop video data" << std::endl;
+		}
+
+		if (!m_videoDecoder.IsOpen())
+		{
+			return WORK_FINISH;
 		}
 
 		uint8_t* videoData = spVideoData->GetData();

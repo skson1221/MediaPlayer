@@ -62,6 +62,7 @@ namespace player
 			safe_delete(m_pMediaFile);
 		}
 
+		StreamController::GetInstance()->CreateCodec(m_pMediaFile->GetVideoCodec(), m_pMediaFile->GetAudioCodec(), m_pMediaFile->GetCodecParam());
 		StreamController::GetInstance()->SetWorkMode(WorkMode::WORK_MODE_FORWARD_STEP);
 	}
 }

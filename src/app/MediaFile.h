@@ -24,7 +24,8 @@ namespace player
 		void run();
 
 		bool Open(const QString& sFileName);
-		AVCodecID GetCodecID();
+		AVCodecID GetVideoCodec();
+		AVCodecID GetAudioCodec();
 		const AVCodecParameters* GetCodecParam();
 
 	private:

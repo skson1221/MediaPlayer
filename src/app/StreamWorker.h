@@ -18,6 +18,7 @@ namespace player
 		void Start();
 		void SetRenderCallback(TyFnRenderCallback fn);
 		void SetWorkMode(WorkMode mode);
+		void CreateCodec(AVCodecID eVideoCodec, AVCodecID eAudioCodecID, const AVCodecParameters* pCodecParam);
 
 		TyFnVideoStream GetVideoStreamCallback();
 		TyFnAudioStream GetAudioStreamCallback();

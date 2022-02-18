@@ -48,7 +48,7 @@ namespace player
             av_init_packet(&packet);
             if (av_read_frame(m_pFormatContext, &packet) < 0)
                 continue;
-
+            //av_seek_frame
             if (packet.stream_index == m_nVideoStreamIdx)
             {
                 bool res = m_fnVideoStream(packet.data, packet.size);
@@ -75,7 +75,7 @@ namespace player
             printf("Could not find stream information %s\n", sFileName.toStdString().c_str());
             return false;
         }
-
+        
         for (int i = 0; i < m_pFormatContext->nb_streams; i++)
         {
             if (AVMEDIA_TYPE_VIDEO == m_pFormatContext->streams[i]->codecpar->codec_type)
@@ -99,9 +99,9 @@ namespace player
         return true;
     }
 
-    AVCodecID MediaFile::GetCodecID()
+    AVCodecID MediaFile::GetVideoCodec()
     {
-        if (m_pFormatContext && 0 < m_nVideoStreamIdx)
+        if (m_pFormatContext && 0 <= m_nVideoStreamIdx)
         {
             return m_pFormatContext->streams[m_nVideoStreamIdx]->codecpar->codec_id;
         }
@@ -109,9 +109,19 @@ namespace player
         return AV_CODEC_ID_NONE;
     }
 
+    AVCodecID MediaFile::GetAudioCodec()
+    {
+        if (m_pFormatContext && 0 <= m_nAudioStreamIdx)
+        {
+            return m_pFormatContext->streams[m_nAudioStreamIdx]->codecpar->codec_id;
+        }
+
+        return AV_CODEC_ID_NONE;
+    }
+
     const AVCodecParameters* MediaFile::GetCodecParam()
     {
-        if (m_pFormatContext && 0 < m_nVideoStreamIdx)
+        if (m_pFormatContext && 0 <= m_nVideoStreamIdx)
         {
             return m_pFormatContext->streams[m_nVideoStreamIdx]->codecpar;
         }
